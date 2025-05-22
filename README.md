@@ -3,89 +3,141 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>To-Do List</title>
+  <title>Your Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
   <style>
-    body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f4f8;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-
-.todo-container {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-input {
-  padding: 10px;
-  font-size: 1rem;
-  width: 200px;
-}
-
-button {
-  padding: 10px 15px;
-  margin-left: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px;
-}
-
-li {
-  padding: 10px;
-  background-color: #e0f7fa;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  display: flex;
-  justify-content: space-between;
-}
-
-li.completed {
-  text-decoration: line-through;
-  color: gray;
-}
+    body { font-family: 'Inter', sans-serif; }
+    html { scroll-behavior: smooth; }
+    .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.7s ease-out; }
+    .fade-in.visible { opacity: 1; transform: none; }
   </style>
 </head>
-<body>
-  <div class="todo-container">
-    <h1>To-Do List</h1>
-    <input type="text" id="taskInput" placeholder="Add a new task" />
-    <button onclick="addTask()">Add</button>
-    <ul id="taskList"></ul>
-  </div>
+<body class="bg-gray-50 text-gray-900">
+
+  <!-- Header -->
+  <header class="bg-white shadow sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-indigo-600 animate_animated animate_fadeInLeft">Hariprasath</h1>
+      <nav class="space-x-4 animate_animated animate_fadeInRight">
+        <a href="#about" class="hover:text-indigo-600">About</a>
+        <a href="#skills" class="hover:text-indigo-600">Skills</a>
+        <a href="#projects" class="hover:text-indigo-600">Projects</a>
+        <a href="#experience" class="hover:text-indigo-600">Experience</a>
+        <a href="#resume" class="hover:text-indigo-600">Resume</a>
+        <a href="#contact" class="hover:text-indigo-600">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="min-h-screen flex flex-col items-center justify-center text-center bg-gradient-to-b from-white to-indigo-50 px-4">
+    <h2 class="text-5xl font-bold mb-4 animate_animated animate_fadeInDown">Hi, I'm <span class="text-indigo-600">Hariprasath</span></h2>
+    <p class="text-xl max-w-2xl mb-6 animate_animated animate_fadeInUp">Cybersecurity student passionate about ethical hacking, network defense, and securing digital systems from real-world threats.</p>
+    <div class="space-x-4 animate_animated animate_fadeInUp">
+      <a href="https://github.com/heisenberg7077" class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow hover:scale-105 transition">GitHub</a>
+      <a href="https://www.linkedin.com/in/hari-prasath-3ab198299" class="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-full hover:bg-indigo-100 transition hover:scale-105">LinkedIn</a>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="max-w-4xl mx-auto px-4 py-16 fade-in">
+    <h3 class="text-3xl font-bold mb-4">About Me</h3>
+    <p class="text-lg text-gray-700">
+      I’m currently pursuing a degree in Cybersecurity, with hands-on experience in penetration testing, vulnerability scanning, and ethical hacking. I love tackling CTF challenges and exploring how digital systems can be protected from modern threats. I enjoy working with tools like Nmap, Burp Suite, and Wireshark, and I'm eager to contribute to real-world security projects.
+    </p>
+  </section>
+
+  <!-- Skills -->
+  <section id="skills" class="bg-indigo-50 py-16 fade-in">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold mb-8 text-center">Skills & Tools</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 text-center">
+        <div class="hover:scale-105 transition"><p>Linux</p></div>
+        <div class="hover:scale-105 transition"><p>Nmap</p></div>
+        <div class="hover:scale-105 transition"><p>Burp Suite</p></div>
+        <div class="hover:scale-105 transition"><p>Wireshark</p></div>
+        <div class="hover:scale-105 transition"><p>Python</p></div>
+        <div class="hover:scale-105 transition"><p>Metasploit</p></div>
+        <div class="hover:scale-105 transition"><p>Bash Scripting</p></div>
+        <div class="hover:scale-105 transition"><p>OWASP Top 10</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="bg-white py-16 fade-in">
+    <div class="max-w-6xl mx-auto px-4">
+      <h3 class="text-3xl font-bold mb-8 text-center">Cybersecurity Projects</h3>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition p-4">
+          <h4 class="font-semibold text-xl mb-2">Python Port Scanner</h4>
+          <p class="text-gray-600">A basic command-line tool to scan open ports on a given host using Python's socket library.</p>
+        </div>
+        <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition p-4">
+          <h4 class="font-semibold text-xl mb-2">CTF Writeups</h4>
+          <p class="text-gray-600">Writeups of solved Capture The Flag (CTF) challenges from platforms like TryHackMe and Hack The Box.</p>
+        </div>
+        <div class="bg-white shadow-md rounded-xl overflow-hidden hover:shadow-xl transition p-4">
+          <h4 class="font-semibold text-xl mb-2">Basic Vulnerability Scanner</h4>
+          <p class="text-gray-600">A script that checks for common web vulnerabilities like XSS and SQL Injection based on user input.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experience -->
+  <section id="experience" class="py-16 bg-white fade-in">
+    <div class="max-w-4xl mx-auto px-4">
+      <h3 class="text-3xl font-bold mb-8 text-center">Experience & Education</h3>
+      <div class="space-y-6">
+        <div class="border-l-4 border-indigo-600 pl-4">
+          <h4 class="text-xl font-semibold">B.E. in Cybersecurity – Sri Shakthi Institute of Engineering and Technology</h4>
+          <p class="text-gray-600">Current student learning cybersecurity fundamentals, ethical hacking, and secure programming.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Resume -->
+  <section id="resume" class="py-16 bg-indigo-50 fade-in">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h3 class="text-3xl font-bold mb-4">Resume</h3>
+      <p class="text-gray-600 mb-6">Click below to view or download my resume.</p>
+      <a href="Hari resume (1).pdf" download class="bg-indigo-600 text-white px-6 py-3 rounded-full hover:bg-indigo-700 transition hover:scale-105 inline-block">Download Resume</a>
+      <div class="mt-8">
+        <img src="Hari resume (1).png" alt="Resume Preview" class="mx-auto max-w-full rounded shadow-md">
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="max-w-4xl mx-auto px-4 py-16 fade-in">
+    <h3 class="text-3xl font-bold mb-4">Contact</h3>
+    <p class="text-lg mb-4">Have a project in mind or want to collaborate? Reach out!</p>
+    <p>Email: <a href="mailto:hariprasath90047@gmail.com" class="text-indigo-600">hariprasath90047@gmail.com</a></p>
+    <p>Phone: +91 98765 43210</p>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-100 text-center py-4 text-gray-600 fade-in">
+    &copy; 2025 Hariprasath. All rights reserved.
+  </footer>
+
+  <!-- Scroll Animation Script -->
   <script>
-    function addTask() {
-  const taskInput = document.getElementById("taskInput");
-  const taskList = document.getElementById("taskList");
-  const taskText = taskInput.value.trim();
-
-  if (taskText === "") return;
-
-  const li = document.createElement("li");
-  li.textContent = taskText;
-
-  // Toggle complete
-  li.addEventListener("click", () => {
-    li.classList.toggle("completed");
-  });
-
-  // Delete on double click
-  li.addEventListener("dblclick", () => {
-    li.remove();
-  });
-
-  taskList.appendChild(li);
-  taskInput.value = "";
-}
+    const faders = document.querySelectorAll('.fade-in');
+    const options = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+    const appearOnScroll = new IntersectionObserver(function(entries, observer) {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      });
+    }, options);
+    faders.forEach(fader => appearOnScroll.observe(fader));
   </script>
+
 </body>
 </html>
