@@ -152,6 +152,30 @@
   </footer>
 
   <!-- Scroll Animation Script -->
+  <!-- Login Panel (top-right) -->
+  <div id="loginPanel" class="hidden fixed top-16 right-4 z-60 w-80 bg-white rounded-lg shadow-xl border overflow-hidden">
+    <div class="px-4 py-3 flex justify-between items-center border-b">
+      <h4 class="font-semibold text-lg">Sign In</h4>
+      <button id="loginClose" class="text-gray-500 hover:text-gray-800">&times;</button>
+    </div>
+    <form id="loginForm" class="px-4 py-4 space-y-3">
+      <div>
+        <label class="text-sm text-gray-700">Email</label>
+        <input id="email" type="email" required class="w-full mt-1 px-3 py-2 border rounded" />
+      </div>
+      <div>
+        <label class="text-sm text-gray-700">Password</label>
+        <input id="password" type="password" required class="w-full mt-1 px-3 py-2 border rounded" />
+      </div>
+      <div class="flex justify-end space-x-2">
+        <button type="button" id="cancelLogin" class="px-3 py-2 rounded border">Cancel</button>
+        <button type="submit" class="px-4 py-2 rounded bg-indigo-600 text-white">Sign in</button>
+      </div>
+      <p class="text-xs text-gray-500">Passwords are hashed client-side for transit demo only. Use HTTPS and server-side salted hashing in production.</p>
+      <p id="loginError" class="text-sm text-red-600 hidden"></p>
+      <p id="loginStatus" class="text-sm text-green-600 hidden"></p>
+    </form>
+  </div>
   <script>
     const faders = document.querySelectorAll('.fade-in');
     const options = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
@@ -175,58 +199,104 @@
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    const loginBtn = document.getElementById('loginBtn');
-    const loginPanel = document.getElementById('loginPanel');
-    const loginClose = document.getElementById('loginClose');
-    const cancelLogin = document.getElementById('cancelLogin');
-    const loginForm = document.getElementById('loginForm');
+    // Run login wiring after DOM is ready and guard missing elements
+    document.addEventListener('DOMContentLoaded', () => {
+      const loginBtn = document.getElementById('loginBtn');
+      const loginPanel = document.getElementById('loginPanel');
+      const loginClose = document.getElementById('loginClose');
+      const cancelLogin = document.getElementById('cancelLogin');
+      const loginForm = document.getElementById('loginForm');
 
-    function openPanel() { loginPanel.classList.remove('hidden'); }
-    function closePanel() { loginPanel.classList.add('hidden'); }
+      if (!loginBtn || !loginPanel) return; // nothing to do
 
-    loginBtn.addEventListener('click', () => {
-      openPanel();
-      document.getElementById('email').focus();
-    });
-    loginClose.addEventListener('click', closePanel);
-    cancelLogin.addEventListener('click', closePanel);
+      function openPanel() { loginPanel.classList.remove('hidden'); }
+      function closePanel() { loginPanel.classList.add('hidden'); }
 
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value;
-      if (!email || !password) return;
+      loginBtn.addEventListener('click', () => {
+        openPanel();
+        const emailEl = document.getElementById('email');
+        if (emailEl) emailEl.focus();
+      });
 
-      // Client-side hash for demo only
-      const passwordHash = await sha256Hex(password);
+      if (loginClose) loginClose.addEventListener('click', closePanel);
+      if (cancelLogin) cancelLogin.addEventListener('click', closePanel);
 
-      // Example: send hashed password to server endpoint (replace /api/login)
-      try {
-        const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, passwordHash })
+      if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const emailEl = document.getElementById('email');
+          const pwdEl = document.getElementById('password');
+          const errEl = document.getElementById('loginError');
+          const statusEl = document.getElementById('loginStatus');
+          const email = emailEl ? emailEl.value.trim() : '';
+          const password = pwdEl ? pwdEl.value : '';
+          // clear messages
+          if (errEl) { errEl.textContent = ''; errEl.classList.add('hidden'); }
+          if (statusEl) { statusEl.textContent = ''; statusEl.classList.add('hidden'); }
+
+          // Basic client-side validation
+          function validateEmail(v) {
+            // simple RFC-5322-ish regex (sufficient for demo)
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+          }
+          function validatePassword(p) {
+            // require at least 8 chars, one letter and one digit
+            return p && p.length >= 8 && /[A-Za-z]/.test(p) && /\d/.test(p);
+          }
+
+          if (!validateEmail(email)) {
+            if (errEl) { errEl.textContent = 'Enter a valid email address.'; errEl.classList.remove('hidden'); }
+            return;
+          }
+          if (!validatePassword(password)) {
+            if (errEl) { errEl.textContent = 'Password must be at least 8 characters and include letters and numbers.'; errEl.classList.remove('hidden'); }
+            return;
+          }
+
+          // Client-side hash for transit demo only
+          const passwordHash = await sha256Hex(password);
+
+          // If opened via file:// (no backend available), simulate a realistic server response
+          const isFileProtocol = window.location.protocol === 'file:' || window.origin === 'null';
+          try {
+            let res;
+            if (isFileProtocol) {
+              // Simulate network latency
+              await new Promise(r => setTimeout(r, 500));
+              // Simulate server-side acceptance for valid inputs (demo only)
+              const simulatedOk = true; // could add more rules here
+              res = { ok: simulatedOk, text: async () => simulatedOk ? 'OK' : 'Invalid credentials' };
+            } else {
+              // Real backend path - replace with your API
+              res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, passwordHash })
+              });
+            }
+
+            if (res && res.ok) {
+              if (statusEl) { statusEl.textContent = 'Logged in successfully (demo).'; statusEl.classList.remove('hidden'); }
+              // close panel after a short delay to show message
+              setTimeout(() => { closePanel(); }, 900);
+            } else {
+              const txt = res && res.text ? await res.text() : 'Login failed';
+              if (errEl) { errEl.textContent = txt; errEl.classList.remove('hidden'); }
+            }
+          } catch (err) {
+            console.error(err);
+            if (errEl) { errEl.textContent = 'Network error. Ensure site is served over HTTPS or run a local server.'; errEl.classList.remove('hidden'); }
+          }
         });
-        if (res.ok) {
-          // handle success (redirect, show toast, etc.)
-          closePanel();
-          alert('Login request sent (demo).');
-        } else {
-          const txt = await res.text();
-          alert('Login failed: ' + txt);
-        }
-      } catch (err) {
-        console.error(err);
-        alert('Network error. Ensure site is served over HTTPS.');
       }
-    });
 
-    // Close panel on outside click
-    document.addEventListener('click', (ev) => {
-      if (!loginPanel.classList.contains('hidden')) {
-        const target = ev.target;
-        if (!loginPanel.contains(target) && target !== loginBtn) closePanel();
-      }
+      // Close panel on outside click
+      document.addEventListener('click', (ev) => {
+        if (!loginPanel.classList.contains('hidden')) {
+          const target = ev.target;
+          if (!loginPanel.contains(target) && target !== loginBtn) closePanel();
+        }
+      });
     });
   </script>
 
