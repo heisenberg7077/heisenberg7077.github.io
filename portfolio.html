@@ -33,11 +33,11 @@
           <a href="#contact" class="hover:text-indigo-600">Contact</a>
         </nav>
 
-        <!-- Login Button -->
-        <a href="login.html"
+        <!-- Login Button (opens top-right panel) -->
+        <button id="loginBtn"
            class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition duration-300">
           Login
-        </a>
+        </button>
       </div>
     </div>
   </header>
@@ -163,6 +163,71 @@
       });
     }, options);
     faders.forEach(fader => appearOnScroll.observe(fader));
+  </script>
+
+  <!-- Login Panel Script -->
+  <script>
+    // Utility: SHA-256 hash using Web Crypto API -> hex string
+    async function sha256Hex(message) {
+      const msgUint8 = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    const loginBtn = document.getElementById('loginBtn');
+    const loginPanel = document.getElementById('loginPanel');
+    const loginClose = document.getElementById('loginClose');
+    const cancelLogin = document.getElementById('cancelLogin');
+    const loginForm = document.getElementById('loginForm');
+
+    function openPanel() { loginPanel.classList.remove('hidden'); }
+    function closePanel() { loginPanel.classList.add('hidden'); }
+
+    loginBtn.addEventListener('click', () => {
+      openPanel();
+      document.getElementById('email').focus();
+    });
+    loginClose.addEventListener('click', closePanel);
+    cancelLogin.addEventListener('click', closePanel);
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) return;
+
+      // Client-side hash for demo only
+      const passwordHash = await sha256Hex(password);
+
+      // Example: send hashed password to server endpoint (replace /api/login)
+      try {
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, passwordHash })
+        });
+        if (res.ok) {
+          // handle success (redirect, show toast, etc.)
+          closePanel();
+          alert('Login request sent (demo).');
+        } else {
+          const txt = await res.text();
+          alert('Login failed: ' + txt);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Network error. Ensure site is served over HTTPS.');
+      }
+    });
+
+    // Close panel on outside click
+    document.addEventListener('click', (ev) => {
+      if (!loginPanel.classList.contains('hidden')) {
+        const target = ev.target;
+        if (!loginPanel.contains(target) && target !== loginBtn) closePanel();
+      }
+    });
   </script>
 
 </body>
